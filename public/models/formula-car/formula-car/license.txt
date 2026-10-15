@@ -1,0 +1,11 @@
+Model Information:
+* title:	Formula Car
+* source:	https://sketchfab.com/3d-models/formula-car-c2a67fc6bd414ae4888e06d229e5a8f6
+* author:	Yan Carvalho (https://sketchfab.com/carvalhoyan)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Formula Car" (https://sketchfab.com/3d-models/formula-car-c2a67fc6bd414ae4888e06d229e5a8f6) by Yan Carvalho (https://sketchfab.com/carvalhoyan) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

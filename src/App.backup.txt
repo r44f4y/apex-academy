@@ -1,0 +1,435 @@
+
+import { Canvas, useFrame } from '@react-three/fiber'
+import { Text, useGLTF } from '@react-three/drei'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import * as THREE from 'three'
+import './App.css'
+
+type Phase = 'ready' | 'lights' | 'go'
+
+
+
+
+function DetailedFormulaCar({
+  position,
+  moving = false,
+}: {
+  position: [number, number, number]
+  moving?: boolean
+}) {
+  const { scene } = useGLTF(
+    '/models/formula-car/formula-car/scene.gltf'
+  )
+
+  const carRef = useRef<THREE.Group>(null)
+  const collisionDistance = 4
+const collisionWidth = 2.5
+
+  const carModel = useMemo(() => {
+    const cloned = scene.clone(true)
+
+    // Rotate to face down the track
+    cloned.rotation.y = Math.PI
+
+    // Use a temporary wrapper to calculate the bounds
+    const wrapper = new THREE.Group()
+    wrapper.add(cloned)
+    wrapper.scale.setScalar(0.45)
+    wrapper.updateMatrixWorld(true)
+
+    const bounds = new THREE.Box3().setFromObject(wrapper)
+    const center = bounds.getCenter(new THREE.Vector3())
+
+    // Center horizontally and place lowest point on the track
+    wrapper.position.x = -center.x
+    wrapper.position.y = -bounds.min.y + 0.08
+    wrapper.position.z = -center.z
+
+    return wrapper
+  }, [scene])
+
+  
+
+useFrame(({ scene }, delta) => {
+  if (!carRef.current || !moving) return
+
+  const player = carRef.current
+  const playerPosition = new THREE.Vector3()
+  player.getWorldPosition(playerPosition)
+
+  const playerSpeed = 16
+  const safeGap = 4.5
+  let allowedMovement = playerSpeed * delta
+
+  scene.traverse((object) => {
+    if (
+      object.userData.isOpponent &&
+      object instanceof THREE.Group
+    ) {
+      const opponentPosition = new THREE.Vector3()
+      object.getWorldPosition(opponentPosition)
+
+      const distanceAhead =
+        playerPosition.z - opponentPosition.z
+
+      const lateralDistance = Math.abs(
+        playerPosition.x - opponentPosition.x
+      )
+
+      if (
+        distanceAhead >= 0 &&
+        lateralDistance < 2.5
+      ) {
+        const availableSpace = Math.max(
+          0,
+          distanceAhead - safeGap
+        )
+
+        allowedMovement = Math.min(
+          allowedMovement,
+          availableSpace
+        )
+      }
+    }
+  })
+
+  player.position.z -= Math.max(0, allowedMovement)
+})
+
+
+
+  return (
+    <>
+      <group ref={carRef} position={position}>
+        <primitive object={carModel} />
+      </group>
+
+      <ChaseCamera target={carRef} />
+    </>
+  )
+}
+
+
+
+function ChaseCamera({
+  target,
+}: {
+  target: React.RefObject<THREE.Group | null>
+}) {
+  useFrame(({ camera }, delta) => {
+    if (!target.current) return
+
+    const carPosition = new THREE.Vector3()
+    target.current.getWorldPosition(carPosition)
+
+    const desiredPosition = new THREE.Vector3(
+      carPosition.x,
+      carPosition.y + 3.5,
+      carPosition.z + 9
+    )
+
+    camera.position.lerp(
+      desiredPosition,
+      Math.min(1, delta * 5)
+    )
+
+    camera.lookAt(
+      carPosition.x,
+      carPosition.y + 1,
+      carPosition.z - 12
+    )
+  })
+
+  return null
+}
+
+function FormulaCar({
+  position,
+  color,
+  player = false,
+  moving = false,
+}: {
+  position: [number, number, number]
+  color: string
+  player?: boolean
+  moving?: boolean
+}) {
+  const group = useRef<THREE.Group>(null)
+
+  useFrame((_, delta) => {
+    if (group.current && moving) {
+      group.current.position.z -= delta * (player ? 16 : 13)
+    }
+  })
+
+  return (
+  <group
+    ref={group}
+    position={position}
+    userData={{ isOpponent: true }}
+  >
+      {/* Main chassis */}
+      <mesh position={[0, 0.38, 0]}>
+        <boxGeometry args={[0.9, 0.25, 2.8]} />
+        <meshStandardMaterial color={color} metalness={0.5} roughness={0.3} />
+      </mesh>
+
+      {/* Nose */}
+      <mesh position={[0, 0.3, -1.6]}>
+        <boxGeometry args={[0.28, 0.15, 1.2]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+
+      {/* Cockpit */}
+      <mesh position={[0, 0.65, 0.2]}>
+        <boxGeometry args={[0.5, 0.35, 0.8]} />
+        <meshStandardMaterial color="#111111" />
+      </mesh>
+
+      {/* Front and rear wings */}
+      {[-1.9, 1.35].map((z) => (
+        <mesh key={z} position={[0, 0.28, z]}>
+          <boxGeometry args={[1.9, 0.09, 0.35]} />
+          <meshStandardMaterial color="#151515" />
+        </mesh>
+      ))}
+
+      {/* Wheels */}
+      {[-1, 1].map((x) =>
+        [-1, 1].map((z) => (
+          <mesh
+            key={`${x}-${z}`}
+            position={[x * 0.66, 0.36, z * 0.9]}
+            rotation={[0, 0, Math.PI / 2]}
+          >
+            <cylinderGeometry args={[0.37, 0.37, 0.3, 16]} />
+            <meshStandardMaterial color="#090909" />
+          </mesh>
+        ))
+      )}
+
+      {player && (
+        <Text
+          position={[0, 1.4, 0]}
+          fontSize={0.45}
+          color="#ffffff"
+          anchorX="center"
+        >
+          YOU — P5
+        </Text>
+      )}
+    </group>
+  )
+}
+
+
+function StartingLights({
+  phase,
+  count,
+}: {
+  phase: Phase
+  count: number
+}) {
+  return (
+    <group position={[0, 6, -48]}>
+      {/* Light housing */}
+      <mesh>
+        <boxGeometry args={[11, 1.8, 0.5]} />
+        <meshStandardMaterial color="#111111" />
+      </mesh>
+
+      {/* Five starting lights facing the camera */}
+      {[0, 1, 2, 3, 4].map((i) => {
+        const active = phase === 'lights' && i < count
+
+        return (
+          <group key={i} position={[(i - 2) * 2, 0, 0.4]}>
+            <mesh>
+              <cylinderGeometry args={[0.65, 0.65, 0.15, 32]} />
+              <meshStandardMaterial
+                color="#080808"
+                metalness={0.3}
+              />
+            </mesh>
+
+            <mesh position={[0, 0, 0.15]}>
+              <sphereGeometry args={[0.48, 32, 32]} />
+              <meshStandardMaterial
+                color={active ? '#ff1010' : '#350606'}
+                emissive={active ? '#ff0000' : '#000000'}
+                emissiveIntensity={active ? 4 : 0}
+              />
+            </mesh>
+          </group>
+        )
+      })}
+    </group>
+  )
+}
+
+
+function Track() {
+  return (
+    <>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[300, 600]} />
+        <meshStandardMaterial color="#24633b" />
+      </mesh>
+
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, -100]}>
+        <planeGeometry args={[22, 400]} />
+        <meshStandardMaterial color="#292d34" />
+      </mesh>
+
+      {[-10.5, 10.5].map((x) => (
+        <mesh
+          key={x}
+          position={[x, 0.04, -100]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <planeGeometry args={[0.3, 400]} />
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+      ))}
+
+      {Array.from({ length: 10 }, (_, i) => (
+        <mesh
+          key={i}
+          position={[i % 2 === 0 ? -3.5 : 3.5, 0.05, -i * 6]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <planeGeometry args={[4, 0.18]} />
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+      ))}
+    </>
+  )
+}
+
+function Scene({ phase, count }: { phase: Phase; count: number }) {
+  const colors = [
+    '#ff8700', '#e8002d', '#3671c6', '#00d2be', '#e8002d',
+    '#ff8700', '#3671c6', '#00d2be', '#ffffff', '#aa44ff',
+  ]
+
+  return (
+    <Canvas camera={{ position: [0, 9, 22], fov: 60 }} shadows>
+      <color attach="background" args={['#87b8db']} />
+      <ambientLight intensity={1.6} />
+      <directionalLight position={[10, 20, 10]} intensity={2.5} castShadow />
+
+      <Track />
+      <StartingLights phase={phase} count={count} />
+
+      
+
+{Array.from({ length: 10 }, (_, i) => {
+  const x = i % 2 === 0 ? -3.5 : 3.5
+  const z = -60 + Math.floor(i / 2) * 7
+
+  return i === 4 ? (
+    <DetailedFormulaCar
+      key="player-car"
+      position={[x, 0, z]}
+      moving={phase === 'go'}
+    />
+  ) : (
+    <FormulaCar
+      key={`opponent-${i}`}
+      position={[x, 0, z]}
+      color={colors[i]}
+      moving={phase === 'go'}
+    />
+  )
+})}
+
+
+
+      <fog attach="fog" args={['#87b8db', 90, 250]} />
+    </Canvas>
+  )
+}
+
+export default function App() {
+  const [phase, setPhase] = useState<Phase>('ready')
+  const [count, setCount] = useState(0)
+  const [raceId, setRaceId] = useState(0)
+
+  useEffect(() => {
+    if (phase !== 'lights') return
+
+    let current = 0
+    const interval = window.setInterval(() => {
+      current += 1
+      setCount(current)
+
+      if (current === 5) {
+        window.clearInterval(interval)
+      }
+    }, 1000)
+
+    return () => window.clearInterval(interval)
+  }, [phase])
+
+  useEffect(() => {
+    if (phase !== 'lights' || count !== 5) return
+
+    const timeout = window.setTimeout(() => {
+      setPhase('go')
+    }, 1000 + Math.random() * 1500)
+
+    return () => window.clearTimeout(timeout)
+  }, [phase, count])
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.code === 'Space') {
+        event.preventDefault()
+        if (phase === 'ready') {
+          setCount(0)
+          setPhase('lights')
+        }
+      }
+
+      if (event.code === 'KeyR') {
+  event.preventDefault()
+  setCount(0)
+  setPhase('ready')
+  setRaceId((previous) => previous + 1)
+}
+    }
+
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [phase])
+
+  return (
+    <main className="game">
+      <header className="topbar">
+        <div className="logo">APEX<span>ACADEMY</span></div>
+        <div className="level">LEVEL 01 / LIGHTS OUT</div>
+      </header>
+
+      <section className="viewport">
+        <Scene key={raceId} phase={phase} count={count} />
+
+        <div className="hud">
+          <div>STARTING POSITION</div>
+          <strong>P5</strong>
+        </div>
+
+        <div className="instructions">
+          {phase === 'ready' && 'PRESS SPACE TO START THE LIGHT SEQUENCE'}
+          {phase === 'lights' && 'WATCH THE LIGHTS...'}
+          {phase === 'go' && 'LIGHTS OUT — AWAY WE GO!'}
+        </div>
+      </section>
+
+      <footer className="footer">
+        <span>SPACE — START</span>
+        <span>R — RESTART</span>
+        <span>APEX ACADEMY © 2026</span>
+      </footer>
+    </main>
+  )
+}
