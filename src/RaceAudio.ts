@@ -98,7 +98,7 @@ export class RaceAudio {
     const freq = 58 + speedFraction * 190 + (accelerating ? 24 : 0)
     this.engine.frequency.setTargetAtTime(freq, t, 0.10)
     this.engineHarmonic.frequency.setTargetAtTime(freq * 2.02, t, 0.10)
-    this.engineGain.gain.setTargetAtTime(0.027 + speedFraction * 0.045, t, 0.12)
+    this.engineGain.gain.setTargetAtTime(0.0135 + speedFraction * 0.0225, t, 0.12)
   }
   silenceEngine() {
     if (this.ctx && this.engineGain) this.engineGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.08)

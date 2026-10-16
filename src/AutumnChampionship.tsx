@@ -23,11 +23,11 @@ const TOTAL_DRIVERS = 15
 const MAX_SPEED = 22.8
 const LEAF_SPEED_PENALTY = 15 / 3.6 // 15 km/h in metres per second
 const LEAF_EFFECT_SECONDS = 3
-const LAPS = 5
+const LAPS = 3
 type HazardPatch = { id: number; position: number; lane: number }
 const HAZARD_WIDTH = 3.6 // 50% of previous width
 const HAZARD_LENGTH = 8.0 // 50% of previous length: 25% of previous area
-const hazardCountForLap = (lap: number) => lap === 1 ? 3 : lap === 2 ? 2 : 3 // Four new patches on laps 3–5
+const hazardCountForLap = (lap: number) => lap === 1 ? 3 : lap === 2 ? 2 : 3 // Four new patches on lap 3
 function spawnHazards(existing: HazardPatch[], lap: number): HazardPatch[] {
   const added: HazardPatch[] = []
   const count = hazardCountForLap(lap)
@@ -57,7 +57,7 @@ const DRIVERS: Driver[] = AI_NAMES.map((name, i) => ({
   pace: 17.8 + (14 - i) * 0.12, offset: ((i % 3) - 1) * 2.3
 }))
 const GRID_SPACING = 5.8
-const randomGridPosition = () => Math.floor(Math.random() * TOTAL_DRIVERS) + 1
+const randomGridPosition = () => Math.floor(Math.random() * TOTAL_DRIVERS-8) + 9
 const freshAI = (playerGrid: number): AIState[] => DRIVERS.map((d,i) => {
   const gridSlot = i + 1 >= playerGrid ? i + 2 : i + 1
   return {...d, progress: (TOTAL_DRIVERS-gridSlot)*GRID_SPACING, lateral: d.offset, speed: 0, finishTime: null, hitCooldown: 0}
@@ -573,14 +573,14 @@ export default function AutumnChampionship({onBack,onNextSeason,onRaceComplete}:
         <div className="sc-viewport"><Canvas shadows camera={{position:[-20,14,0],fov:68,near:0.1,far:300}} dpr={[1,1.6]}><AutumnWorld game={game} ai={ai} hazards={hazards} contaminated={leafGrip>0}/></Canvas>
           {phase==='racing' && hud.hazard && <div className="sc-warning">⚠ LEAVES ON TYRES — GRIP & ACCELERATION REDUCED!</div>}
           {phase==='racing' && hud.offroad && !hud.hazard && <div className="sc-warning">⚠ OFF TRACK — RETURN TO THE CIRCUIT!</div>}
-          {phase==='racing' && !hud.hazard && !hud.offroad && <div className="sc-hint">LEAF PILES: 3 ON LAP 1 · +2 ON LAP 2 · +3 EACH LAP AFTER</div>}
+          {phase==='racing' && !hud.hazard && !hud.offroad && <div className="sc-hint">LEAF PILES: 3 ON LAP 1 · +2 ON LAP 2 · +3 ON LAP 3</div>}
           {phase==='lights' && <div className="sc-start-overlay"><div className="sc-light-rack">{[1,2,3,4,5].map(n=><span key={n} className={n<=lights?'lit':''}/>)}</div><strong>WAIT FOR LIGHTS OUT</strong></div>}
         </div>
         <div className="sc-controls"><span>W ACCELERATE · S BRAKE · A / D STEER</span><span>LEAVES ON TYRES <b>{leafGrip.toFixed(1)}s</b></span><span>CHASE CAMERA · 5-LIGHT START</span></div>
       </section>
-      <aside className="sc-sidebar"><span>ROUND 02 / FOUR SEASONS</span><h2>RACE CONTROL</h2><div className="sc-weather">🍂 <strong>FALLING LEAVES</strong><small>FOREST TRACK · LOW GRIP</small></div><h3>YOUR OBJECTIVE</h3><p>Start from P{gridPosition} and race five laps through the forest. Leaf piles mark your tyres and reduce your top speed by 15 km/h for 3 seconds. Hitting another pile resets the timer to 3 seconds. AI drivers steer around the piles and defend their positions.</p><h3>RACE POSITION</h3><div className="sc-bigposition">P{phase==='results'?position:currentPosition}<small> / {TOTAL_DRIVERS}</small></div><div className="sc-progress"><div style={{width:`${Math.min(100,(hud.progress/(TRACK_LENGTH*LAPS))*100)}%`}}/></div><small>RACE DISTANCE COMPLETED</small><p className="sc-next">NEXT ROUND: WINTER — THE STORM</p></aside>
+      <aside className="sc-sidebar"><span>ROUND 02 / FOUR SEASONS</span><h2>RACE CONTROL</h2><div className="sc-weather">🍂 <strong>FALLING LEAVES</strong><small>FOREST TRACK · LOW GRIP</small></div><h3>YOUR OBJECTIVE</h3><p>Start from P{gridPosition} and race three laps through the forest. Leaf piles mark your tyres and reduce your top speed by 15 km/h for 3 seconds. Hitting another pile resets the timer to 3 seconds. AI drivers steer around the piles and defend their positions.</p><h3>RACE POSITION</h3><div className="sc-bigposition">P{phase==='results'?position:currentPosition}<small> / {TOTAL_DRIVERS}</small></div><div className="sc-progress"><div style={{width:`${Math.min(100,(hud.progress/(TRACK_LENGTH*LAPS))*100)}%`}}/></div><small>RACE DISTANCE COMPLETED</small><p className="sc-next">NEXT ROUND: WINTER — THE STORM</p></aside>
     </div>
-    {phase==='intro' && <div className="sc-modal"><div className="sc-dialog"><span>SEASONS OF SPEED / ROUND 02</span><h2>AUTUMN <em>WINDS.</em></h2><p>Race 14 competitive AI drivers over five laps. Start from a randomized grid position, avoid leaf piles as new patches appear each lap, and fight through traffic for a podium.</p><div className="sc-steps"><div><b>W</b> ACCELERATE</div><div><b>S</b> BRAKE</div><div><b>A / D</b> STEER</div></div><p className="sc-note">The five starting lights will illuminate before lights out. All cars remain stationary until the race begins.</p><button className="sc-primary" onClick={start}>GO TO STARTING GRID →</button><button className="sc-textbutton" onClick={onBack}>← RETURN TO ACADEMY</button></div></div>}
+    {phase==='intro' && <div className="sc-modal"><div className="sc-dialog"><span>SEASONS OF SPEED / ROUND 02</span><h2>AUTUMN <em>WINDS.</em></h2><p className="season-intro-description">Race 14 competitive AI drivers over three laps. Start from a randomized grid position, avoid leaf piles as new patches appear each lap, and fight through traffic for a podium.</p><p className="season-side-effects"><strong>Side Effects of Leaves: Leaf debris sticks to the tyres, reducing maximum speed by 15 km/h for 3 seconds and increasing lap times.</strong></p><div className="sc-steps"><div><b>W</b> ACCELERATE</div><div><b>S</b> BRAKE</div><div><b>A / D</b> STEER</div></div><button className="sc-primary" onClick={start}>GO TO STARTING GRID →</button><button className="sc-textbutton" onClick={onBack}>← RETURN TO ACADEMY</button></div></div>}
     {phase==='results' && <div className="sc-modal"><div className="sc-dialog sc-results"><span>ROUND 02 / CHEQUERED FLAG</span><h2>RACE <em>COMPLETE.</em></h2><p>You've completed the Autumn Grand Prix.</p><div className="sc-results-grid"><div><small>FINISHING POSITION</small><strong>P{position}<small> / {TOTAL_DRIVERS}</small></strong></div><div><small>TOTAL RACE TIME</small><strong>{timeString(finishTime)}</strong></div></div><div className="sc-classification"><h3>FINAL CLASSIFICATION</h3>{finalBoard.map((r,i)=><div key={r.name} className={r.name==='YOU'?'sc-you':''}><span>P{i+1}</span><b>{r.name}</b><span>{timeString(r.time)}</span></div>)}</div><button className="sc-primary" onClick={start}>RETRY AUTUMN ↻</button><button className="sc-textbutton" onClick={onBack}>BACK TO ACADEMY</button>{onNextSeason ? <button className="sc-primary" onClick={onNextSeason}>CONTINUE TO WINTER →</button> : <p className="sc-note">Winter and Spring races are coming next.</p>}</div></div>}
   </main>
 }

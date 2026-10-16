@@ -23,11 +23,11 @@ const TOTAL_DRIVERS = 15
 const MAX_SPEED = 22.8
 const POLLEN_SPEED_MULTIPLIER = 0.75 // 25% lower top speed while affected
 const POLLEN_EFFECT_SECONDS = 2
-const LAPS = 5
+const LAPS = 3
 type HazardPatch = { id: number; position: number; lane: number }
 const HAZARD_WIDTH = 4.5
 const HAZARD_LENGTH = 7.0
-const hazardCountForLap = (lap: number) => lap === 1 ? 2 : lap === 2 ? 2 : 3 // Four new patches on laps 3–5
+const hazardCountForLap = (lap: number) => lap === 1 ? 2 : lap === 2 ? 2 : 3 // Four new patches on lap 3
 function spawnHazards(existing: HazardPatch[], lap: number): HazardPatch[] {
   const added: HazardPatch[] = []
   const count = hazardCountForLap(lap)
@@ -57,7 +57,7 @@ const DRIVERS: Driver[] = AI_NAMES.map((name, i) => ({
   pace: 17.8 + (14 - i) * 0.12, offset: ((i % 3) - 1) * 2.3
 }))
 const GRID_SPACING = 5.8
-const randomGridPosition = () => Math.floor(Math.random() * TOTAL_DRIVERS) + 1
+const randomGridPosition = () => Math.floor(Math.random() * TOTAL_DRIVERS-8) + 9
 const freshAI = (playerGrid: number): AIState[] => DRIVERS.map((d,i) => {
   const gridSlot = i + 1 >= playerGrid ? i + 2 : i + 1
   return {...d, progress: (TOTAL_DRIVERS-gridSlot)*GRID_SPACING, lateral: d.offset, speed: 0, finishTime: null, hitCooldown: 0}
@@ -571,14 +571,14 @@ export default function SpringChampionship({onBack,onNextSeason,onRaceComplete}:
         <div className="sc-viewport"><Canvas shadows camera={{position:[-20,14,0],fov:68,near:0.1,far:300}} dpr={[1,1.6]}><SpringWorld game={game} ai={ai} hazards={hazards} contaminated={pollenTimer>0}/></Canvas>
           {phase==='racing' && hud.hazard && <div className="sc-warning">⚠ POLLEN INTAKE — 25% POWER LOSS + MILD UNDERSTEER FOR 2 SECONDS!</div>}
           {phase==='racing' && hud.offroad && !hud.hazard && <div className="sc-warning">⚠ OFF TRACK — RETURN TO THE CIRCUIT!</div>}
-          {phase==='racing' && !hud.hazard && !hud.offroad && <div className="sc-hint">POLLEN CLOUDS: 2 ON LAP 1 · +2 ON LAP 2 · +3 EACH LAP AFTER</div>}
+          {phase==='racing' && !hud.hazard && !hud.offroad && <div className="sc-hint">POLLEN CLOUDS: 2 ON LAP 1 · +2 ON LAP 2 · +3 ON LAP 3</div>}
           {phase==='lights' && <div className="sc-start-overlay"><div className="sc-light-rack">{[1,2,3,4,5].map(n=><span key={n} className={n<=lights?'lit':''}/>)}</div><strong>WAIT FOR LIGHTS OUT</strong></div>}
         </div>
         <div className="sc-controls"><span>W ACCELERATE · S BRAKE · A / D STEER</span><span>POLLEN EFFECT <b>{pollenTimer.toFixed(1)}s</b></span><span>CHASE CAMERA · 5-LIGHT START</span></div>
       </section>
-      <aside className="sc-sidebar"><span>ROUND 04 / FOUR SEASONS</span><h2>RACE CONTROL</h2><div className="sc-weather">🌸 <strong>POLLEN CLOUDS</strong><small>SPRING CIRCUIT · ENGINE POWER + UNDERSTEER</small></div><h3>YOUR OBJECTIVE</h3><p>Start from P{gridPosition} and race five laps through the spring circuit. Entering a pollen cloud reduces your maximum speed by 25% and causes moderate understeer for 2 seconds. Hitting another cloud resets the timer to 2 seconds. AI drivers dodge clouds and defend their positions.</p><h3>RACE POSITION</h3><div className="sc-bigposition">P{phase==='results'?position:currentPosition}<small> / {TOTAL_DRIVERS}</small></div><div className="sc-progress"><div style={{width:`${Math.min(100,(hud.progress/(TRACK_LENGTH*LAPS))*100)}%`}}/></div><small>RACE DISTANCE COMPLETED</small><p className="sc-next">FINAL ROUND — CHAMPIONSHIP FINALE</p></aside>
+      <aside className="sc-sidebar"><span>ROUND 04 / FOUR SEASONS</span><h2>RACE CONTROL</h2><div className="sc-weather">🌸 <strong>POLLEN CLOUDS</strong><small>SPRING CIRCUIT · ENGINE POWER + UNDERSTEER</small></div><h3>YOUR OBJECTIVE</h3><p>Start from P{gridPosition} and race three laps through the spring circuit. Entering a pollen cloud reduces your maximum speed by 25% and causes moderate understeer for 2 seconds. Hitting another cloud resets the timer to 2 seconds. AI drivers dodge clouds and defend their positions.</p><h3>RACE POSITION</h3><div className="sc-bigposition">P{phase==='results'?position:currentPosition}<small> / {TOTAL_DRIVERS}</small></div><div className="sc-progress"><div style={{width:`${Math.min(100,(hud.progress/(TRACK_LENGTH*LAPS))*100)}%`}}/></div><small>RACE DISTANCE COMPLETED</small><p className="sc-next">FINAL ROUND — CHAMPIONSHIP FINALE</p></aside>
     </div>
-    {phase==='intro' && <div className="sc-modal"><div className="sc-dialog"><span>SEASONS OF SPEED / ROUND 04</span><h2>SPRING <em>BLOOM.</em></h2><p>Race 14 competitive AI drivers over five laps on a lush spring circuit. Avoid drifting yellow pollen clouds: they temporarily clog your engine intake and reduce your maximum speed by 25% and cause moderate understeer for 2 seconds. Another cloud resets the full 2-second timer.</p><div className="sc-steps"><div><b>W</b> ACCELERATE</div><div><b>S</b> BRAKE</div><div><b>A / D</b> STEER</div></div><p className="sc-note">The five starting lights will illuminate before lights out. All cars remain stationary until the race begins.</p><button className="sc-primary" onClick={start}>GO TO STARTING GRID →</button><button className="sc-textbutton" onClick={onBack}>← RETURN TO ACADEMY</button></div></div>}
+    {phase==='intro' && <div className="sc-modal"><div className="sc-dialog"><span>SEASONS OF SPEED / ROUND 04</span><h2>SPRING <em>BLOOM.</em></h2><p className="season-intro-description">Race 14 competitive AI drivers over three laps on a lush spring circuit. Avoid drifting yellow pollen clouds: they temporarily clog your engine intake and reduce your maximum speed by 25% and cause moderate understeer for 2 seconds. Another cloud resets the full 2-second timer.</p><p className="season-side-effects"><strong>Side Effects of Humid Air and Pollen: Maximum speed reduced by 25% and moderate understeer for 2 seconds after driving through pollen clouds.</strong></p><div className="sc-steps"><div><b>W</b> ACCELERATE</div><div><b>S</b> BRAKE</div><div><b>A / D</b> STEER</div></div><button className="sc-primary" onClick={start}>GO TO STARTING GRID →</button><button className="sc-textbutton" onClick={onBack}>← RETURN TO ACADEMY</button></div></div>}
     {phase==='results' && <div className="sc-modal"><div className="sc-dialog sc-results"><span>ROUND 04 / CHEQUERED FLAG</span><h2>RACE <em>COMPLETE.</em></h2><p>You've completed the Spring Grand Prix.</p><div className="sc-results-grid"><div><small>FINISHING POSITION</small><strong>P{position}<small> / {TOTAL_DRIVERS}</small></strong></div><div><small>TOTAL RACE TIME</small><strong>{timeString(finishTime)}</strong></div></div><div className="sc-classification"><h3>FINAL CLASSIFICATION</h3>{finalBoard.map((r,i)=><div key={r.name} className={r.name==='YOU'?'sc-you':''}><span>P{i+1}</span><b>{r.name}</b><span>{timeString(r.time)}</span></div>)}</div><button className="sc-primary" onClick={start}>RETRY SPRING ↻</button><button className="sc-textbutton" onClick={onBack}>BACK TO ACADEMY</button>{onNextSeason && <button className="sc-primary" onClick={onNextSeason}>VIEW CHAMPIONSHIP STANDINGS →</button>}<p className="sc-note">FOUR SEASONS COMPLETE — YOU REACHED THE FINAL CHEQUERED FLAG.</p></div></div>}
   </main>
 }

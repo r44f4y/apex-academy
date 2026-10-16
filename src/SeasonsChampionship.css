@@ -7,3 +7,70 @@
 .sc-light-rack{display:flex;gap:12px;padding:20px;background:#0d0e12;border:6px solid #050507;border-radius:12px;box-shadow:0 10px 40px #000b}
 .sc-light-rack span{width:clamp(32px,5vw,58px);aspect-ratio:1;border-radius:50%;background:#330b11;border:3px solid #1c1b1f}
 .sc-light-rack span.lit{background:radial-gradient(circle at 40% 35%,#ff8e92,#ee1738 55%,#8d061a);box-shadow:0 0 22px #ef1738aa}
+/* =========================================
+   SEASON INSTRUCTIONS — VISUAL HIERARCHY
+========================================= */
+
+/* Smaller introductory paragraph */
+.season-intro-description {
+  font-size: clamp(14px, 1.35vw, 18px);
+  line-height: 1.6;
+  font-weight: 400;
+  color: #b9bbc4;
+  max-width: 1050px;
+}
+
+/* Large, high-visibility side effects */
+.season-side-effects {
+  font-size: clamp(20px, 2.4vw, 30px);
+  line-height: 1.4;
+  font-weight: 900;
+  color: #ffe600;
+  margin: 28px 0 38px;
+  letter-spacing: 0.1px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 650px) {
+  .season-intro-description {
+    font-size: 14px;
+  }
+
+  .season-side-effects {
+    font-size: 20px;
+  }
+}
+/* =========================================
+   SEASON INSTRUCTIONS — FINAL OVERRIDES
+========================================= */
+
+/* Smaller description */
+.sc-dialog p.season-intro-description {
+  font-size: clamp(14px, 1.35vw, 18px);
+  line-height: 1.6;
+  font-weight: 400;
+  color: #b9bbc4;
+  max-width: 1050px;
+}
+
+/* BIG YELLOW SIDE EFFECTS */
+.sc-dialog p.season-side-effects,
+.sc-dialog p.season-side-effects strong {
+  color: #ffe600 !important;
+  font-size: clamp(22px, 2.5vw, 32px);
+  line-height: 1.4;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+  .sc-dialog p.season-intro-description {
+    font-size: 14px;
+  }
+
+  .sc-dialog p.season-side-effects,
+  .sc-dialog p.season-side-effects strong {
+    font-size: 20px;
+  }
+}
