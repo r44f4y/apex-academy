@@ -149,7 +149,16 @@ function World({ cars, phase, lights, tick }: { cars: CarState[]; phase: Phase; 
   </Canvas>
 }
 const initialHud: Hud = {phase:'ready',lights:0,position:5,speed:0,rpm:5000,distance:0,reaction:null,wheelspin:0,clutch:0,result:'',elapsed:0,split100:null,steering:0}
-export default function App() {
+type LevelOneProps = {
+  onLevelSelect?: () => void
+  onQualifying?: () => void
+}
+
+export default function App({
+  onLevelSelect,
+  onQualifying
+}: LevelOneProps) {
+  const [showIntro, setShowIntro] = useState(true)
   const carsRef=useRef<CarState[]>(newCars())
   const [raceId,setRaceId]=useState(0)
   const [hud,setHud]=useState<Hud>(initialHud)
@@ -221,7 +230,7 @@ export default function App() {
     low.frequency.setTargetAtTime(baseHz, t, 0.045)
     high.frequency.setTargetAtTime(baseHz * 2.02, t, 0.045)
     filter.frequency.setTargetAtTime(480 + rpmFactor * 1750, t, 0.07)
-    const volume = hud.phase === 'finished' ? 0.035 : 0.055 + rpmFactor * 0.075
+    const volume = hud.phase === 'finished' ? 0 : 0.055 + rpmFactor * 0.075
     gain.gain.setTargetAtTime(volume, t, 0.075)
   }, [hud.rpm, hud.phase])
 
@@ -251,6 +260,7 @@ export default function App() {
   const setPhase=(p:Phase)=>{phaseRef.current=p;setHud(h=>({...h,phase:p}))}
   const reset=useCallback(()=>{
     cancelTimers();carsRef.current=newCars();keys.current={space:false,w:false,shift:false,a:false,d:false};lightsOut.current=null;elapsed.current=0;updateCounter.current=0;launchStarted.current=false;driversRef.current=newDrivers()
+    setShowIntro(true)
     phaseRef.current='ready';setHud(initialHud);setRaceId(n=>n+1)
   },[])
   const begin=useCallback(()=>{
@@ -271,7 +281,7 @@ export default function App() {
       if(['Space','KeyW','ShiftLeft','ShiftRight','KeyA','KeyD','ArrowLeft','ArrowRight','KeyR'].includes(e.code))e.preventDefault()
       if(e.code==='KeyR'){if(!e.repeat)reset();return}
       if(e.code==='Space'){
-        if(!keys.current.space && phaseRef.current==='ready')begin()
+        if(!showIntro && !keys.current.space && phaseRef.current==='ready')begin()
         keys.current.space=true
       }
       if(e.code==='KeyW')keys.current.w=true
@@ -298,7 +308,7 @@ export default function App() {
     const blur=()=>{keys.current.w=false;keys.current.shift=false;keys.current.a=false;keys.current.d=false}
     window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',blur)
     return()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);cancelTimers()}
-  },[begin,reset])
+},[begin,reset,showIntro])
   const tick=useCallback((dt:number)=>{
     const phase=phaseRef.current
     const cars=carsRef.current
@@ -455,7 +465,140 @@ export default function App() {
         {hud.phase==='finished'&&<><strong>{hud.result}</strong><div>PRESS R TO RESTART</div></>}
       </div>
     </section>
+    {showIntro && (
+  <div className="race-modal-backdrop">
+    <div className="race-modal">
+      <div className="race-modal-kicker">
+        APEX ACADEMY / LEVEL 01
+      </div>
+
+      <h1>LIGHTS OUT<span>.</span></h1>
+      <h2>HOW FAST CAN YOU REACT?</h2>
+
+      <p>
+        You're starting from <strong>P5</strong>.
+        Get the best possible launch over 200 metres.
+      </p>
+
+      <div className="race-steps">
+        <div><b>01</b><span><strong>HOLD SPACE</strong> — Engage your clutch.</span></div>
+        <div><b>02</b><span><strong>WATCH THE LIGHTS</strong> — Wait for all five red lights to go out.</span></div>
+        <div><b>03</b><span><strong>RELEASE SPACE</strong> — Launch as quickly as possible.</span></div>
+        <div><b>04</b><span><strong>HOLD W</strong> to accelerate. Use A/D to steer.</span></div>
+      </div>
+
+      <p className="race-modal-note">
+        Your reaction time and finishing position will be recorded.
+      </p>
+
+      <button
+        className="race-primary-button"
+        onClick={() => setShowIntro(false)}
+      >
+        I'M READY — LET'S RACE ↗
+      </button>
+
+      <div className="race-modal-tip">
+        THEN HOLD SPACE TO START THE LIGHTS
+      </div>
+    </div>
+  </div>
+)}
+
+{!showIntro && hud.phase === 'finished' && (
+  <div className="race-modal-backdrop">
+    <div className="race-modal race-results">
+      <div className="race-modal-kicker">
+        APEX ACADEMY / 200M RESULT
+      </div>
+
+      <h1>
+        {hud.reaction !== null && hud.reaction < 0
+          ? <>JUMP START<span>.</span></>
+          : <>LIGHTS OUT<span>.</span></>}
+      </h1>
+
+      <div className="race-result-label">YOUR REACTION TIME</div>
+
+      <div className="race-reaction-time">
+        {hud.reaction === null
+          ? '—'
+          : hud.reaction < 0
+            ? 'JUMP START'
+            : `${Math.round(hud.reaction * 1000)} `}
+        {hud.reaction !== null && hud.reaction >= 0 && (
+          <small>ms</small>
+        )}
+      </div>
+
+      <p className="race-result-description">
+        {hud.reaction !== null && hud.reaction < 0
+          ? 'You released the clutch before the lights went out.'
+          : 'Your launch reaction from lights out to clutch release.'}
+      </p>
+
+      <div className="race-result-grid">
+        <div>
+          <span>STARTING POSITION</span>
+          <strong>P5</strong>
+        </div>
+
+        <div>
+          <span>FINISHING POSITION</span>
+          <strong>{hud.reaction !== null && hud.reaction < 0 ? 'DSQ' : `P${hud.position}`}</strong>
+        </div>
+      </div>
+
+      <div
+  className={`race-position-change ${
+    hud.reaction !== null && hud.reaction < 0
+      ? 'position-lost'
+      : hud.position < 5
+        ? 'position-gained'
+        : hud.position > 5
+          ? 'position-lost'
+          : 'position-neutral'
+  }`}
+>
+  {hud.reaction !== null && hud.reaction < 0
+    ? 'INVALID START'
+    : hud.position < 5
+      ? `+${5 - hud.position} POSITIONS GAINED`
+      : hud.position > 5
+        ? `-${hud.position - 5} POSITIONS LOST`
+        : 'POSITION MAINTAINED'}
+</div>
+  
+
+      <div className="race-result-actions">
+        <button
+          className="race-secondary-button"
+          onClick={onLevelSelect}
+          disabled={!onLevelSelect}
+        >
+          LEVEL SELECTION
+        </button>
+
+        <button
+          className="race-primary-button"
+          onClick={onQualifying}
+          disabled={!onQualifying}
+        >
+          FIGURE OUT WHY YOU STARTED P5 ↗
+        </button>
+      </div>
+      <div className="race-retry-container">
+  <button
+    type="button"
+    className="race-retry-button"
+    onClick={reset}
+  >
+    RETRY REACTION TIME ↻
+  </button>
+</div>
+    </div>
+    </div>
+)}
     <footer className="footer"><span>SPACE: CLUTCH RELEASE</span><span>W: THROTTLE</span><span>A/D: STEER</span><span>SHIFT: SLOW CLUTCH ENGAGEMENT</span><span>R: RESTART</span></footer>
-    <p className="disclaimer">Educational 2026-inspired model. Engine torque, mass, traction, gearing and electrical assistance are estimates; not a validated FIA or team simulator. AI reaction times, pace, and passing decisions vary per race within bounded ranges. Steering is arcade-assisted; collision envelopes are simplified, not rigid-body impact physics.</p>
   </main>
 }

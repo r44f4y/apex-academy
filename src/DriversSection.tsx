@@ -75,13 +75,34 @@ export default function DriversSection() {
   const current = teams[index]
   const next = teams[nextIndex]
   return <>
-    <section className="drivers-intro"><div className="drivers-intro-eyebrow">APEX ACADEMY / THE PEOPLE</div><h2>22 DRIVERS.<br/><span>11 TEAMS.</span><br/>ONE GRID.</h2><p>THE PEOPLE BEHIND THE MACHINES</p><div className="drivers-intro-scroll">SCROLL TO MEET THE GRID ↓</div></section>
+    <section className="drivers-intro">
+  <h2>22 DRIVERS<span>.</span></h2>
+
+  <p>THE PEOPLE BEHIND THE MACHINES</p>
+</section>
     <div ref={trackRef} className="drivers-scroll-track" style={{ height: `${teams.length * 85}vh` }}>
       <section className="drivers-sticky" style={{ background: current.color }}>
         <div className="drivers-next-bg" style={{ background: next.color, opacity: blend }} />
         <div className="drivers-topline" style={{ color: blend >= 0.5 ? next.ink : current.ink }}><span>THE 2026 DRIVERS</span><span>{String(Math.round(position) + 1).padStart(2, '0')} / 11</span></div>
-        <Slide team={current} index={index} opacity={1 - blend} shift={-24 * blend} />
-        {nextIndex !== index && <Slide team={next} index={nextIndex} opacity={blend} shift={24 * (1 - blend)} />}
+        {/* CURRENT TEAM — gradually fades out */}
+<Slide
+  key={`current-${index}`}
+  team={current}
+  index={index}
+  opacity={1 - blend}
+  shift={-blend * 24}
+/>
+
+{/* NEXT TEAM — gradually fades in */}
+{nextIndex !== index && (
+  <Slide
+    key={`next-${nextIndex}`}
+    team={next}
+    index={nextIndex}
+    opacity={blend}
+    shift={(1 - blend) * 24}
+  />
+)}
         <div className="drivers-progress" style={{ color: blend >= 0.5 ? next.ink : current.ink }}><div style={{ width: `${position / (teams.length - 1) * 100}%` }} /></div>
       </section>
     </div>

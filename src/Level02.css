@@ -1,0 +1,191 @@
+.fl-page{min-height:100vh;background:#0b0d12;color:#fff;font-family:Inter,Arial,sans-serif;padding:24px;box-sizing:border-box}.fl-page *{box-sizing:border-box}.fl-header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:0 auto 26px;max-width:1500px}.fl-header button{background:none;color:#fff;border:1px solid #ffffff55;padding:12px 18px;cursor:pointer;font-weight:800}.fl-header strong{font-size:23px;letter-spacing:-1px}.fl-header em{color:#e31b3f;font-style:normal}.fl-header>span{font-size:11px;font-weight:800;letter-spacing:2px}.fl-layout{display:grid;grid-template-columns:minmax(0,1fr) 325px;gap:20px;max-width:1500px;margin:auto}.fl-game{background:#191d25;border:1px solid #343945;min-width:0}.fl-hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:18px;background:#12151c}.fl-hud>div{display:flex;flex-direction:column;gap:8px}.fl-hud small{font-size:10px;letter-spacing:1.5px;color:#a5abb7;font-weight:700}.fl-hud b{font-size:clamp(17px,2vw,29px);font-variant-numeric:tabular-nums}.fl-game canvas{width:100%;height:auto;display:block}.fl-controls{display:flex;justify-content:space-between;gap:10px;padding:14px 18px;font-size:11px;font-weight:800;letter-spacing:1px}.fl-controls span{color:#ff576a}.fl-board{background:#161920;padding:20px;max-height:850px;overflow:auto}.fl-board p{font-size:10px;color:#ff5266;font-weight:800;letter-spacing:2px}.fl-board h2{font-family:'Barlow Condensed',Impact,sans-serif;font-size:38px;margin:7px 0 20px}.fl-board-rows{display:flex;flex-direction:column;gap:2px}.fl-board-rows>div{display:grid;grid-template-columns:27px 1fr auto;gap:9px;padding:10px 5px;border-bottom:1px solid #ffffff16;align-items:center;font-size:11px}.fl-board-rows strong{font-size:12px}.fl-board-rows span:last-child{font-variant-numeric:tabular-nums;color:#c5c9d1}.fl-board-rows .fl-you{background:#bb1735;padding-left:8px;padding-right:8px}.fl-board>small{display:block;color:#a0a5b0;font-size:9px;line-height:1.6;margin-top:15px}.fl-modal{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}.fl-modal>div{width:min(620px,100%);background:#171b24;border-top:5px solid #e51e41;padding:clamp(25px,5vw,55px);box-shadow:0 20px 80px #0009}.fl-modal span{color:#ff5266;font-weight:900;letter-spacing:2px;font-size:12px}.fl-modal h1{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(48px,8vw,85px);line-height:.9;margin:25px 0}.fl-modal p{color:#c3c8d0;line-height:1.7}.fl-modal button{background:#d40c30;border:0;color:white;padding:16px 23px;font-weight:900;letter-spacing:1px;cursor:pointer;margin:14px 10px 0 0}.fl-modal .fl-secondary{background:#343b48}@media(max-width:980px){.fl-layout{grid-template-columns:1fr}.fl-board{max-height:400px}.fl-header>span{display:none}}@media(max-width:600px){.fl-page{padding:10px}.fl-hud{padding:10px;gap:5px}.fl-hud b{font-size:15px}.fl-controls{font-size:9px;flex-wrap:wrap}}
+
+
+/* Add these rules at the END of your existing src/Level02.css */
+.fl-3d-viewport { position: relative; width: 100%; height: clamp(460px, 67vh, 850px); overflow: hidden; background: #9ec6db; }
+.fl-3d-viewport canvas { display: block; width: 100%; height: 100%; }
+.fl-track-warning { position: absolute; z-index: 2; top: 20px; left: 50%; transform: translateX(-50%); color: #fff; background: #b4142f; padding: 12px 20px; font-weight: 900; letter-spacing: .1em; white-space: nowrap; pointer-events: none; }
+@media (max-width: 750px) { .fl-3d-viewport { height: 58vh; min-height: 370px; } }
+
+.fl-3d-viewport canvas{height:100%!important}
+/* Add to the END of src/Level02.css */
+.fl-controls button {
+  background: #202832;
+  color: #fff;
+  border: 1px solid #58606b;
+  padding: 9px 12px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.fl-controls button:hover { border-color: #ff4058; }
+.fl-hud { flex-wrap: wrap; }
+.fl-hud > div { min-width: 100px; }
+/* LEVEL 02 — QUALIFYING INTRO REDESIGN */
+
+.fl-modal:has(.qualifying-intro) {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.fl-modal > .qualifying-intro {
+  width: min(100%, 850px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  margin: auto;
+  padding: clamp(24px, 4vw, 42px);
+  background: #12161e;
+  border: 1px solid #353b46;
+  border-top: 5px solid #f43f46;
+  color: #fff;
+  text-align: left;
+}
+
+.qualifying-kicker {
+  color: #f15a69;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 22px;
+}
+
+.qualifying-intro h1 {
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-size: clamp(48px, 7vw, 78px);
+  font-weight: 900;
+  line-height: 1;
+  margin: 0 0 16px;
+  color: #fff;
+}
+
+.qualifying-intro h1 span {
+  color: #f43f46;
+}
+
+.qualifying-intro .qualifying-subtitle {
+  font-size: 17px;
+  color: #aeb7c5;
+  margin: 0 0 28px;
+  line-height: 1.5;
+}
+
+.qualifying-subtitle strong {
+  color: #fff;
+}
+
+.qualifying-stages {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.qualifying-stages > div {
+  background: #20252e;
+  border: 1px solid #343b46;
+  border-top: 3px solid #e6384b;
+  padding: 20px;
+}
+
+.qualifying-stages span {
+  color: #9ba5b4;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.qualifying-stages h2 {
+  font-size: 36px;
+  margin: 10px 0 6px;
+  color: #fff;
+}
+
+.qualifying-stages strong {
+  display: block;
+  color: #f15a69;
+  font-size: 22px;
+}
+
+.qualifying-stages p {
+  font-size: 13px;
+  color: #b9c1cb;
+  margin: 10px 0 0;
+}
+
+.qualifying-controls {
+  background: #1c222b;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+}
+
+.qualifying-controls > strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  margin-bottom: 14px;
+}
+
+.qualifying-controls > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.qualifying-controls span {
+  color: #c3c9d3;
+  font-size: 14px;
+}
+
+.qualifying-controls b {
+  color: #f15a69;
+  margin-right: 6px;
+}
+
+.qualifying-intro .qualifying-note {
+  font-size: 13px;
+  color: #aeb7c5;
+  margin: 0 0 22px;
+}
+
+.qualifying-intro .qualifying-start-button {
+  display: block;
+  width: 100%;
+  padding: 18px 24px;
+  background: #e6384b;
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.qualifying-intro .qualifying-start-button:hover {
+  background: #ff4b5f;
+}
+
+@media (max-width: 600px) {
+  .qualifying-stages {
+    grid-template-columns: 1fr;
+  }
+
+  .fl-modal > .qualifying-intro {
+    padding: 22px;
+  }
+}
+
+/* Pole ghost status; overlay does not intercept driving controls */
+.fl-3d-viewport { position: relative; }
+.fl-ghost-gap {
+  position: absolute; top: 16px; left: 16px; z-index: 4;
+  pointer-events: none; display: flex; flex-direction: column; gap: 5px;
+  padding: 12px 16px; background: rgba(8, 18, 29, .82);
+  border-left: 3px solid #49e5ff; color: #fff;
+  font-size: 11px; letter-spacing: .6px;
+}
+.fl-ghost-gap span { color: #74e8ff; font-weight: 800; }
+.fl-ghost-gap strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+.fl-ghost-gap small { color: #aab5c4; font-size: 10px; letter-spacing: 0; }

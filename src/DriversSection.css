@@ -1,40 +1,373 @@
-/* Driver introduction */
-.drivers-intro,.drivers-scroll-track{font-family:Inter,Arial,sans-serif}
-.drivers-intro{min-height:100svh;background:#111;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:clamp(32px,7vw,110px);position:relative;overflow:hidden}
-.drivers-intro-eyebrow,.drivers-intro p,.drivers-intro-scroll{font-size:12px;font-weight:800;letter-spacing:2px}
-.drivers-intro-eyebrow{color:#ff3045}
-.drivers-intro h2{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(80px,14vw,220px);line-height:.83;font-weight:800;letter-spacing:-.035em;margin:35px 0}
-.drivers-intro h2 span{color:#ff3045}
-.drivers-intro-scroll{position:absolute;bottom:35px;right:7vw;color:#ff3045}
-/* Full-screen scroll showcase */
-.drivers-scroll-track{position:relative}
-.drivers-sticky{position:sticky;top:0;height:100svh;overflow:hidden;isolation:isolate}
-.drivers-next-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
-.drivers-topline{position:absolute;z-index:5;top:clamp(22px,4vw,60px);left:5.5%;right:5.5%;display:flex;justify-content:space-between;font-size:12px;font-weight:800;letter-spacing:2px}
-.driver-slide{position:absolute;inset:0;pointer-events:none}
-.driver-center-logo{position:absolute;top:29%;left:50%;transform:translate(-50%,-50%);width:min(40vw,480px);height:clamp(130px,21vh,230px);display:flex;align-items:center;justify-content:center;z-index:3}
-.driver-team-logo{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}
-.driver-logo-text{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(22px,3vw,45px);text-align:center}
-/* Four columns: photo | name | name | photo */
-.driver-four-columns{position:absolute;inset:5% 5% 10%;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.35fr);align-items:stretch;gap:clamp(6px,1.5vw,26px);z-index:2}
-.driver-edge-photo{height:100%;min-width:0;display:flex;align-items:flex-end;justify-content:center}
-.driver-edge-photo img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 12px 13px #0003)}
-.driver-edge-placeholder{align-self:center;text-align:center;border:2px dashed currentColor;padding:20px;font-size:12px;opacity:.6}
-.driver-inner-name{align-self:end;text-align:center;min-width:0;padding-bottom:clamp(75px,15vh,170px);z-index:4}
-.driver-inner-number{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(30px,4.5vw,65px);font-weight:700;line-height:1}
-.driver-inner-name h3{display:flex;flex-direction:column;gap:2px;margin:12px 0 0;text-transform:uppercase;font-family:'Barlow Condensed',Impact,sans-serif;line-height:.94;letter-spacing:.015em;font-size:clamp(24px,3.4vw,55px);font-weight:600;overflow-wrap:anywhere}
-.driver-inner-name h3 span{font-weight:500}
-.driver-inner-name h3 strong{font-weight:700}
-.driver-slide-bottom{position:absolute;bottom:48px;left:5.5%;font-size:11px;letter-spacing:2px;font-weight:800;z-index:4}
-.drivers-progress{position:absolute;bottom:23px;left:5.5%;right:5.5%;height:3px;background:#7776;z-index:5}
-.drivers-progress>div{height:100%;background:currentColor}
-@media(max-width:750px){
- .driver-four-columns{inset:12% 2% 19%;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr);gap:3px}
- .driver-center-logo{top:29%;width:45vw;height:25vh}
- .driver-inner-name{padding-bottom:17vh}
- .driver-inner-number{font-size:clamp(21px,5vw,38px)}
- .driver-inner-name h3{font-size:clamp(15px,3.7vw,28px);letter-spacing:0}
- .driver-slide-bottom{bottom:44px}
- .drivers-intro h2{font-size:clamp(70px,14vw,120px)}
+
+/* =========================================
+   DRIVER INTRODUCTION
+========================================= */
+
+.drivers-intro,
+.drivers-scroll-track {
+  font-family: Inter, Arial, sans-serif;
 }
-@media(prefers-reduced-motion:reduce){.drivers-scroll-track *{transition:none!important}}
+
+.drivers-intro {
+  min-height: 100svh;
+  background: #111;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(32px, 7vw, 110px);
+  position: relative;
+  overflow: hidden;
+}
+
+.drivers-intro-eyebrow,
+.drivers-intro p,
+.drivers-intro-scroll {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.drivers-intro-eyebrow {
+  color: #ff3045;
+}
+
+.drivers-intro h2 {
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-size: clamp(80px, 14vw, 220px);
+  line-height: 0.83;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 35px 0;
+}
+
+.drivers-intro h2 span {
+  color: #ff3045;
+}
+
+.drivers-intro-scroll {
+  position: absolute;
+  bottom: 35px;
+  right: 7vw;
+  color: #ff3045;
+}
+
+/* =========================================
+   FULL SCREEN DRIVER SHOWCASE
+========================================= */
+
+.drivers-scroll-track {
+  position: relative;
+}
+
+.drivers-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.drivers-next-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.drivers-topline {
+  position: absolute;
+  z-index: 5;
+  top: clamp(22px, 4vw, 60px);
+  left: 5.5%;
+  right: 5.5%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.driver-slide {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* =========================================
+   TEAM LOGO
+========================================= */
+
+.driver-center-logo {
+  position: absolute;
+  top: 29%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(60vw, 720px);
+height: clamp(195px, 31.5vh, 345px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.driver-team-logo {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.driver-logo-text {
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-size: clamp(22px, 3vw, 45px);
+  text-align: center;
+}
+
+/* =========================================
+   FOUR COLUMN LAYOUT
+
+   PHOTO | NAME | NAME | PHOTO
+========================================= */
+
+.driver-four-columns {
+  position: absolute;
+  inset: 5% 5% 10%;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.35fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(0, 1.35fr);
+  align-items: stretch;
+  gap: clamp(6px, 1.5vw, 26px);
+  z-index: 2;
+}
+
+/* =========================================
+   DRIVER PORTRAITS
+========================================= */
+
+.driver-edge-photo {
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+}
+
+.driver-edge-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 12px 13px #0003);
+}
+
+.driver-edge-placeholder {
+  align-self: center;
+  text-align: center;
+  border: 2px dashed currentColor;
+  padding: 20px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* =========================================
+   DRIVER NAMES AND NUMBERS
+========================================= */
+
+.driver-inner-name {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: none;
+  padding: 0;
+  min-width: 0;
+  z-index: 10;
+  text-align: center;
+}
+
+.driver-inner-number {
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-size: clamp(26px, 3.5vw, 52px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.driver-inner-name h3 {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 10px 0 0;
+  text-transform: uppercase;
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  line-height: 0.95;
+  letter-spacing: 0.015em;
+  font-size: clamp(22px, 2.8vw, 43px);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.driver-inner-name h3 span {
+  font-weight: 500;
+}
+
+.driver-inner-name h3 strong {
+  font-weight: 700;
+}
+
+/* =========================================
+   BOTTOM LABEL AND PROGRESS BAR
+========================================= */
+
+.driver-slide-bottom {
+  position: absolute;
+  bottom: 48px;
+  left: 5.5%;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  z-index: 4;
+}
+
+.drivers-progress {
+  position: absolute;
+  bottom: 23px;
+  left: 5.5%;
+  right: 5.5%;
+  height: 3px;
+  background: #7776;
+  z-index: 5;
+}
+
+.drivers-progress > div {
+  height: 100%;
+  background: currentColor;
+}
+
+/* =========================================
+   SHORTER SCREENS
+========================================= */
+
+@media (max-height: 750px) {
+  .driver-inner-name {
+    transform: translateY(clamp(25px, 12svh, 85px));
+  }
+
+  .driver-inner-number {
+    font-size: clamp(22px, 3vw, 42px);
+  }
+
+  .driver-inner-name h3 {
+    font-size: clamp(18px, 2.4vw, 34px);
+  }
+}
+
+/* =========================================
+   MOBILE SCREENS
+========================================= */
+
+@media (max-width: 750px) {
+  .driver-four-columns {
+    inset: 12% 2% 19%;
+    grid-template-columns:
+      minmax(0, 1.1fr)
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      minmax(0, 1.1fr);
+    gap: 3px;
+    align-items: stretch;
+  }
+
+  .driver-center-logo {
+    top: 29%;
+    width: 45vw;
+    height: 25vh;
+  }
+
+  .driver-inner-name {
+    padding-bottom: 0;
+    transform: translateY(clamp(20px, 12svh, 75px));
+  }
+
+  .driver-inner-number {
+    font-size: clamp(21px, 5vw, 38px);
+  }
+
+  .driver-inner-name h3 {
+    font-size: clamp(15px, 3.7vw, 28px);
+    letter-spacing: 0;
+  }
+
+  .driver-slide-bottom {
+    bottom: 44px;
+  }
+
+  .drivers-intro h2 {
+    font-size: clamp(70px, 14vw, 120px);
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .drivers-scroll-track * {
+    transition: none !important;
+  }
+}
+
+/* CENTERED 22 DRIVERS INTRO */
+
+.drivers-intro {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  gap: 25px;
+}
+
+.drivers-intro h2 {
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-size: clamp(85px, 19vw, 300px);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.drivers-intro h2 span {
+  color: #ff3045;
+}
+
+.drivers-intro p {
+  font-family: Inter, Arial, sans-serif;
+  font-size: clamp(14px, 1.5vw, 20px);
+  font-weight: 500;
+  line-height: 1.8;
+  letter-spacing: 1px;
+  margin: 0;
+  text-align: center;
+}
+
+@media (max-width: 650px) {
+  .drivers-intro h2 {
+    font-size: clamp(60px, 17vw, 120px);
+  }
+
+  .drivers-intro p {
+    font-size: 13px;
+  }
+}

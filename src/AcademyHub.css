@@ -40,3 +40,195 @@
 @media (max-width: 800px) { .academy-levels { grid-template-columns: 1fr; } .academy-upcoming { grid-template-columns: repeat(3,minmax(0,1fr)); grid-template-rows: auto; } .academy-locked-level { min-height: 200px; } .academy-header-tag { display: none; } }
 @media (max-width: 540px) { .academy-hub-header { flex-wrap: wrap; } .academy-upcoming { grid-template-columns: 1fr; } .academy-locked-level { min-height: 155px; } .academy-hub-footer { flex-direction: column; } .academy-featured-meta { flex-wrap: wrap; } }
 @media (prefers-reduced-motion: reduce) { .academy-featured-level { transition: none; } }
+/* FOUR SEASONS CHAMPIONSHIP */
+
+.academy-seasons {
+  margin-top: 90px;
+}
+
+.academy-seasons-heading > span {
+  color: #ff3650;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.academy-seasons-heading h2 {
+  font: 800 clamp(48px, 6vw, 90px)/0.95
+    'Barlow Condensed', Impact, sans-serif;
+  margin: 20px 0;
+  max-width: 950px;
+}
+
+.academy-seasons-heading h2 em {
+  color: #ed1737;
+  font-style: normal;
+}
+
+.academy-seasons-heading p {
+  color: #bfc0c9;
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 680px;
+  margin-bottom: 30px;
+}
+
+.academy-seasons-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  background: #15151a;
+  color: #fff;
+  border: 1px solid #383840;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .2s, transform .2s;
+}
+
+.academy-seasons-card:hover {
+  border-color: #ff3650;
+  transform: translateY(-3px);
+}
+
+.academy-seasons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.season-tile {
+  min-height: 250px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  isolation: isolate;
+  border-right: 1px solid #ffffff24;
+}
+
+.season-tile:last-child {
+  border-right: none;
+}
+
+.season-tile.summer {
+  background: linear-gradient(160deg, #38271a, #a15d25);
+}
+
+.season-tile.autumn {
+  background: linear-gradient(160deg, #241c19, #8c3923);
+}
+
+.season-tile.winter {
+  background: linear-gradient(160deg, #16232d, #426783);
+}
+
+.season-tile.spring {
+  background: linear-gradient(160deg, #15251c, #376e48);
+}
+
+.season-tile span {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+
+.season-tile strong {
+  font: 800 clamp(27px, 3vw, 44px)/1
+    'Barlow Condensed', Impact, sans-serif;
+  margin-bottom: 10px;
+}
+
+.season-tile small {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #ffffffb8;
+}
+
+.academy-seasons-bottom {
+  padding: 26px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  background: #21161b;
+}
+
+.academy-seasons-bottom > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.academy-seasons-bottom span {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #ff6578;
+}
+
+.academy-seasons-bottom strong {
+  font: 800 clamp(22px, 3vw, 36px)
+    'Barlow Condensed', Impact, sans-serif;
+}
+
+.academy-seasons-arrow {
+  font-size: 35px !important;
+  color: #fff !important;
+}
+
+@media (max-width: 800px) {
+  .academy-seasons-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .season-tile {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .academy-seasons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .season-tile {
+    min-height: 150px;
+  }
+}
+/* LIGHTS OUT — CUSTOM CARD IMAGE */
+
+.academy-lights-image {
+  background: #000;
+  overflow: hidden;
+}
+
+.academy-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.academy-featured-level:hover .academy-card-image {
+  transform: scale(1.04);
+}
+/* LEVEL 02 — THE FLYING LAP */
+
+.academy-flying-image {
+  background: #080b16;
+  overflow: hidden;
+}
+
+.academy-flying-image .academy-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
