@@ -4,7 +4,7 @@ export class QualifyingEngineAudio {
   private gain: GainNode | null = null
   private filters: BiquadFilterNode[] = []
   private rpm = 1100
-  private gear = 1
+
   private muted = false
 
   async start() {
@@ -40,7 +40,6 @@ export class QualifyingEngineAudio {
     const ctx = this.ctx
     // Simulated automatic gearbox; engine revs follow speed and throttle.
     const newGear = Math.min(7, Math.max(1, Math.floor(speed / 36) + 1))
-    this.gear = newGear
     const low = (newGear - 1) * 36
     const gearFraction = Math.max(0, Math.min(1, (speed - low) / 36))
     const target = speed < 3 && !throttle
@@ -70,6 +69,5 @@ export class QualifyingEngineAudio {
     this.ctx = null
     this.gain = null
     this.rpm = 1100
-    this.gear = 1
   }
 }

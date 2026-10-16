@@ -234,7 +234,7 @@ function RacingCar({ pose }: { pose: React.RefObject<CarPose> }) {
     })
     return root
   }, [scene])
-  useFrame((_, dt) => {
+  useFrame(() => {
     if (!car.current) return
     const p = pose.current
     car.current.position.set((p.x - 500) * SCALE, 0.08, (p.y - 325) * SCALE)
